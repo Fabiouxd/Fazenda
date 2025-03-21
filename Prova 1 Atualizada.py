@@ -1,6 +1,7 @@
 areas = []      # Armazena áreas em metros quadrados
 culturas = []   # Armazena tipo de cultura (Soja ou Café)
 insumos = []    # Armazena quantidade de insumos em mL
+import csv  # Importa a biblioteca para trabalhar com arquivos CSV
 
 def menu():                                                         
     print("\n=== Sistema de Gestão Agrícola ===")                   # Imprime o título do sistema
@@ -9,7 +10,8 @@ def menu():
     print("3 - Mostrar dados")                                      # Opção para visualizar dados cadastrados
     print("4 - Deletar dados")                                      # Opção para atualizar registros
     print("5 - Atualizar dados")                                    # Opção para excluir registros
-    print("6 - Sair")                                               # Opção para encerrar o programa
+    print("6 - Exportar dados")                                     # Opção para exportar registros
+    print("7 - Sair")                                               # Opção para encerrar o programa
     return input("Escolha uma opção: ")                             # Solicita e retorna a escolha do usuário
 
 def cadastrar_area():                                               # Função para cadastro da areas de cafe e soja
@@ -134,7 +136,23 @@ def atualizar_dados():
     except ValueError:                                              # Se o usuário não digitar um número
         print("Por favor, digite um número válido!")
 
-while True:                                                         # Loop infinito que mantem o programa em execução 
+def exportar_dados():                                               # Função para exportar os dados para um arquivo CSV
+    print("\n=== Exportar Dados ===")
+    if not areas:                                                   # Verifica se há dados para exportar
+        print("Nenhum dado cadastrado para exportar!")
+        return
+    
+    try:
+        with open("dados_agricolas.csv", mode="w", newline="") as arquivo:  # Abre o arquivo para escrita
+            escritor = csv.writer(arquivo)                          # Cria um objeto para escrever no arquivo
+            escritor.writerow(["Area (m2)", "Cultura", "Insumo (mL)"])  # Substitua "Área (m²)" por "Area (m2)"
+            for i in range(len(areas)):                             # Escreve os dados de cada área
+                escritor.writerow([areas[i], culturas[i], insumos[i]])
+        print("Dados exportados com sucesso para 'dados_agricolas.csv'!")
+    except Exception as e:                                          # Trata erros durante a exportação
+        print(f"Erro ao exportar dados: {e}")
+
+while True:                                                         #Loop infinito que mantem o programa em execucao
     opcao = menu()
     
     if opcao == "1":
@@ -147,8 +165,10 @@ while True:                                                         # Loop infin
         deletar_dados()
     elif opcao == "5":
         atualizar_dados()
-    elif opcao == "6":
+    elif opcao == "6": 
+        exportar_dados()
+    elif opcao == "7":
         print("Programa encerrado!")
         break
     else:
-        print("Opção inválida! Por favor, escolha uma opção de 1 a 6.")
+        print("Opção inválida! Por favor, escolha uma opção de 1 a 7.")
